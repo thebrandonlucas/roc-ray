@@ -209,7 +209,7 @@ python3 scripts/release_helpers.py preview-release-notes docs/releases/<version>
 GitHub Pages serves the documentation for the current release only. The
 release workflow's `build-docs` job builds it with read-only permissions: this
 manual, rendered by roc-automation's `actions/build-docs` with the `roc-docs`
-binary Blueprint verifies, and the API reference that `scripts/build_docs.py`
+binary Kai verifies, and the API reference that `scripts/build_docs.py`
 generates. `scripts/release_helpers.py assemble-pages` lays the site out with
 the manual at the root and the API reference under `api/`, redirects the old
 `manual/` address to the root, and gives it a 404 page that sends readers of
@@ -223,8 +223,8 @@ request and push to `main` and uploads it as a workflow artifact, so a change
 can be reviewed before it is released.
 
 To move to a new `roc-docs` release, change the release in the `docs`
-environment of `Blueprint.roc`, run `blueprint update roc-docs`, compare the
-digests it writes to `Blueprint.lock` with the ones the release lists, and
+download in `Kaifile.roc`, run `kai update`, compare the digests it
+writes to `.kai/lock.json` with the ones the release lists, and
 pin `actions/build-docs` in both workflows to the commit that release was
 built from.
 
@@ -235,7 +235,7 @@ RocRay follows the latest nightly build of the Roc compiler. Nothing outside
 `scripts/` names a compiler: `platform/main.roc`, `platform/main-wayland.roc`,
 the examples and the test roots carry no `roc:` header field, and the
 repository has no `.roc-version` file. `scripts/check_no_pins.roc`, part of
-`blueprint run check`, fails when one appears. Nothing bumps a pin, because
+`kai run check`, fails when one appears. Nothing bumps a pin, because
 there is none.
 
 Each CI and release run resolves the latest nightly once, in its first job
@@ -250,7 +250,7 @@ Two compilers are in play, and they are not interchangeable:
 
 * `roc`, the latest nightly, checks, tests and builds the platform, the
   examples and the test roots.
-* `roc-stable`, the nightly `Blueprint.roc` fetches, runs the Roc scripts
+* `roc-stable`, the nightly `Kaifile.roc` fetches, runs the Roc scripts
   under `scripts/`. Every script starts with `#!/usr/bin/env roc-stable`; a
   script's `roc` field, where it has one, must name the same tag.
 
@@ -267,11 +267,10 @@ manual] describes them:
 
 * *Regenerate the host ABI* when the `Checks and generated ABI` CI job reports
   that the latest nightly generates a different `src/roc_platform_abi.zig`:
-  review the diff, run `blueprint run glue-update`, and release. See
+  review the diff, run `kai run glue-update`, and release. See
   xref:host-development.adoc#host-development[Working on the host].
 * *Change the tooling compiler* when the scripts need a newer `roc-stable`:
-  change the tag in `Blueprint.roc`, run `blueprint update` if the locked
-  revision predates it, and fix any script the new compiler breaks in the same
+  change the tag in `Kaifile.roc`, run `kai update` to lock the new
+  download, and fix any script the new compiler breaks in the same
   pull request.
-* *Update script dependencies*, such as basic-cli, in the script headers and
-  `RocPackages` in `Blueprint.roc` together.
+* *Update script dependencies*, such as basic-cli, in the script headers.

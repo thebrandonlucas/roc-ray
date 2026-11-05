@@ -16,7 +16,7 @@ import src/Pins
 ## The platform, its examples and its tests carry no `roc` header field and are
 ## tested with the latest nightly; the repository has no `.roc-version` and no
 ## `.github/roc-nightly.json`. Every script under `scripts/` runs on
-## `roc-stable`, the nightly `Blueprint.roc` fetches: its first line is the
+## `roc-stable`, the nightly `Kaifile.roc` fetches: its first line is the
 ## `roc-stable` shebang, and a `roc` field, where a script has one, names that
 ## same nightly.
 ##
@@ -35,9 +35,9 @@ main! = |args| {
 
 run! : {} => Try({}, [ScriptFailed])
 run! = |{}| {
-	stable = match Pins.stable_tag(read!("Blueprint.roc")?) {
+	stable = match Pins.stable_tag(read!("Kaifile.roc")?) {
 		Ok(tag) => tag
-		Err(NoStableCompiler) => return fail!("Blueprint.roc does not fetch roc-stable with Recipes.roc_nightly(\"<tag>\")")
+		Err(NoStableCompiler) => return fail!("Kaifile.roc does not fetch roc-stable with FetchLocked(\"roc-stable\", roc_nightly(\"<tag>\"))")
 	}
 
 	listing = capture!("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"])?
@@ -55,7 +55,7 @@ run! = |{}| {
 			if Pins.may_pin(path) {
 				match Pins.roc_pin(source) {
 					Ok(tag) if tag != stable => {
-						$problems = $problems.append("${path}: names roc \"${tag}\", but Blueprint.roc runs the scripts on roc-stable ${stable}")
+						$problems = $problems.append("${path}: names roc \"${tag}\", but Kaifile.roc runs the scripts on roc-stable ${stable}")
 					}
 					Err(MalformedPin) => {
 						$problems = $problems.append("${path}: the roc header field must be one quoted nightly tag")
