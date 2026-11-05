@@ -30,16 +30,16 @@ jobs:
         with:
           persist-credentials: false
 
-      # Blueprint downloads roc-docs from the roc-automation release named in
-      # Blueprint.roc and checks its bytes against the digest Blueprint.lock
+      # Kai downloads roc-docs from the roc-automation release named in
+      # Kaifile.roc and checks its bytes against the digest .kai/lock.json
       # records before handing out the path. The docs environment fetches one
       # program and needs no Nix.
-      - name: Set up Blueprint
-        uses: lukewilliamboswell/roc-automation/actions/setup-blueprint@8454f8ed9acc026c85e31e87b132dfeeaf9f1b81
+      - name: Set up Kai
+        uses: ./.github/actions/setup-kai
 
       - id: renderer
         name: Get the verified renderer
-        run: echo "path=$(blueprint run docs-renderer)" >> "$GITHUB_OUTPUT"
+        run: echo "path=$(kai run docs-renderer)" >> "$GITHUB_OUTPUT"
 
       # Catch a gallery still whose source recording has changed.
       - name: Check the prepared images

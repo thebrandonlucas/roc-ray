@@ -1,0 +1,32 @@
+name: Set up Kai
+description: Install the released Kai, optionally with Nix, and restore Kai's download cache.
+
+inputs:
+  install-nix:
+    description: Install Nix, for the environments whose tools come from nixpkgs
+    default: "false"
+  cache-workload:
+    description: Name that separates this job's download cache from other jobs'
+    default: ${{ github.job }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install Nix
+      if: inputs.install-nix == 'true'
+      uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+      with:
+        github_access_token: ${{ github.token }}
+
+    - name: Install Kai
+      shell: bash
+      run: |
+        curl -fsSL https://github.com/thebrandonlucas/kai/releases/download/v0.0.11/install.sh | sh -s -- --version v0.0.11
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+    - name: Restore Kai's downloads
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+      with:
+        path: ~/.cache/kai
+        key: kai-${{ runner.os }}-${{ runner.arch }}-${{ inputs.cache-workload }}-${{ hashFiles('Kaifile.roc', '.kai/lock.json') }}
+        restore-keys: kai-${{ runner.os }}-${{ runner.arch }}-${{ inputs.cache-workload }}-
