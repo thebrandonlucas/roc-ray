@@ -1,6 +1,6 @@
 generated-docs/
 
-# The manual, as roc-docs builds it (blueprint run docs)
+# The manual, as roc-docs builds it (kai run docs)
 .docs-out/
 
 # Built example executables (each Roc app is examples/<name>/main.roc)
@@ -160,5 +160,6 @@ examples/roc-doom-e1m1/fuzz_*
 !examples/roc-doom-e1m1/FUZZ_FINDINGS.md
 examples/roc-doom-e1m1/.roc-fuzz/
 
-# Blueprint state and generated environment
-.blueprint/
+# Kai state and generated environment; the lock is committed
+/.kai/*
+!/.kai/lock.json

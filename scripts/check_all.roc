@@ -9,8 +9,8 @@ import cli.Path
 import cli.Stderr
 import cli.Stdout
 
-## Everything `blueprint run check` checks, in order. Run from the repository
-## root, inside the Blueprint environment.
+## Everything `kai run check` checks, in order. Run from the repository
+## root, inside the Kai environment.
 ##
 ##   1. no compiler pin outside `scripts/` (`scripts/check_no_pins.roc`);
 ##   2. the scripts: the tests of their pure modules under `scripts/src/`,
@@ -18,7 +18,7 @@ import cli.Stdout
 ##   3. the repository lints, `zig build lint`.
 ##
 ## `roc-stable` runs the scripts. Bare `roc`, the latest nightly, is what the
-## platform and its examples are tested with, by `blueprint run test`.
+## platform and its examples are tested with, by `kai run test`.
 main! : List(OsStr) => Try({}, [Exit(I32)])
 main! = |args| {
 	if !args.is_empty() {

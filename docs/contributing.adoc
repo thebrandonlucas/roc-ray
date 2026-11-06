@@ -27,24 +27,24 @@ the smallest app or example that shows the problem.
 
 == Development setup
 
-On x86_64 Linux and Apple Silicon macOS, `Blueprint.roc` declares the
-development environment and `Blueprint.lock` fixes it. With
-https://github.com/lukewilliamboswell/roc-blueprint[Blueprint] and Nix
-installed, and the Roc nightly as `roc` on `PATH`, run:
+`Kaifile.roc` declares the development environment and `.kai/lock.json`
+fixes it. On Linux, with https://github.com/thebrandonlucas/kai[Kai] (the
+release named at the top of `Kaifile.roc`), Nix, and the Roc nightly as `roc`
+on `PATH`, run:
 
 [source,bash]
 ----
-blueprint shell              # Zig, Python, zstd and roc-stable on PATH
-blueprint run glue           # the committed host ABI matches `roc glue`
-blueprint run check          # no compiler pins, the Roc scripts, zig build lint
-blueprint run test           # zig build test
+kai shell              # Zig, Python, zstd and roc-stable on PATH
+kai run glue           # the committed host ABI matches `roc glue`
+kai run check          # no compiler pins, the Roc scripts, zig build lint
+kai run test           # zig build test
 ----
 
 `roc-stable` is the compiler that runs the Roc scripts under `scripts/`, the
-nightly `Blueprint.roc` names; it is not the compiler the platform is tested
+nightly `Kaifile.roc` names; it is not the compiler the platform is tested
 with. The platform, its examples and its tests name no compiler: they are
 tested with the latest Roc nightly, which you install yourself as `roc`.
-Elsewhere, or without Nix, install:
+Kai does not run on macOS yet. Elsewhere, or without Kai and Nix, install:
 
 * https://ziglang.org/download/[Zig] 0.17.0
 * The https://github.com/roc-lang/nightlies/releases/latest[latest Roc nightly],
@@ -162,7 +162,7 @@ Run formatting and repository tidiness checks:
 zig build lint
 ----
 
-`blueprint run check` runs these lints too, after `scripts/check_no_pins.roc`,
+`kai run check` runs these lints too, after `scripts/check_no_pins.roc`,
 which fails when any Roc file outside `scripts/` names a compiler (a `roc:`
 header field), when a `.roc-version` file exists, or when a script under
 `scripts/` does not start with the `roc-stable` shebang, and after the tests,
@@ -411,12 +411,12 @@ This manual is AsciiDoc under `docs/`. `docs/index.adoc` is the book; each
 chapter is a file directly under `docs/` that it includes. It is
 rendered by `roc-docs`, the documentation renderer roc-automation shares
 between Roc repositories, into a website with one page per chapter, a PDF,
-and a Markdown copy of every page. Blueprint fetches the renderer and checks
-it against the digest in `Blueprint.lock`:
+and a Markdown copy of every page. Kai fetches the renderer and checks
+it against the digest in `.kai/lock.json`:
 
 [source,bash]
 ----
-blueprint run docs    # .docs-out/site/index.html and .docs-out/roc-ray.pdf
+kai run docs    # .docs-out/site/index.html and .docs-out/roc-ray.pdf
 ----
 
 The build fails on any renderer warning, unresolved cross reference, missing
@@ -473,7 +473,7 @@ Before opening a PR:
 
 * Keep the change focused and explain the app-author problem it solves.
 * Add or update tests for behavior and failure paths.
-* Run `blueprint run check` (or `zig build lint` without Blueprint) and
+* Run `kai run check` (or `zig build lint` without Kai) and
   `zig build test`, with the latest Roc nightly as `roc`.
 * Put every new standalone hosted declaration in private `Host.roc`, and
   keep its one registered privacy fixture passing.

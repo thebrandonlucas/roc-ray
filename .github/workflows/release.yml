@@ -128,13 +128,10 @@ jobs:
             --skip-bundle-test --skip-integration-probes \
             --platform-mode=bundle --skip-windowed --headless-frames=3
 
-      - uses: lukewilliamboswell/roc-automation/actions/setup-blueprint@8454f8ed9acc026c85e31e87b132dfeeaf9f1b81
-        with:
-          cache: "true"
-          cache-workload: scripts
+      - uses: ./.github/actions/setup-kai
 
       - name: Verify release hosts
-        run: blueprint run check-release-hosts
+        run: kai run check-release-hosts
 
       - name: Resolve previous default bundle
         if: github.event_name == 'workflow_dispatch'
@@ -267,14 +264,14 @@ jobs:
           nightly-tag: ${{ needs.resolve.outputs.nightly-tag }}
           zig: "false"
 
-      # Blueprint downloads roc-docs and checks its bytes against the digest
-      # Blueprint.lock records before handing out the path.
-      - name: Set up Blueprint
-        uses: lukewilliamboswell/roc-automation/actions/setup-blueprint@8454f8ed9acc026c85e31e87b132dfeeaf9f1b81
+      # Kai downloads roc-docs and checks its bytes against the digest
+      # .kai/lock.json records before handing out the path.
+      - name: Set up Kai
+        uses: ./.github/actions/setup-kai
 
       - id: renderer
         name: Get the verified renderer
-        run: echo "path=$(blueprint run docs-renderer)" >> "$GITHUB_OUTPUT"
+        run: echo "path=$(kai run docs-renderer)" >> "$GITHUB_OUTPUT"
 
       - name: Check the prepared images
         run: python3 scripts/prepare_docs_images.py

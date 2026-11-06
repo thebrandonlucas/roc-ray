@@ -432,16 +432,16 @@ class CompilerVersionTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "--roc-version"):
             helpers.tested_compiler("", roc="definitely-not-a-roc-binary")
 
-    def test_stable_compiler_reads_blueprint(self) -> None:
+    def test_stable_compiler_reads_kaifile(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            (root / "Blueprint.roc").write_text(
-                'Programs([Fetch("roc-stable", Recipes.roc_nightly("nightly-2026-10-23-18478ff"))]),\n',
+            (root / "Kaifile.roc").write_text(
+                'FetchLocked("roc-stable", roc_nightly("nightly-2026-10-23-18478ff")),\n',
                 encoding="utf-8",
             )
             self.assertEqual("nightly-2026-10-23-18478ff", helpers.stable_compiler("", root))
             self.assertEqual("given", helpers.stable_compiler("given", root))
-            (root / "Blueprint.roc").write_text("config = []\n", encoding="utf-8")
+            (root / "Kaifile.roc").write_text("kaifile = Std.kaifile([])\n", encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError, "roc-stable"):
                 helpers.stable_compiler("", root)
 

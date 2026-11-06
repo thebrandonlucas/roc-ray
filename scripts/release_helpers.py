@@ -59,7 +59,7 @@ def main() -> int:
     notes.add_argument(
         "--roc-stable-version",
         default="",
-        help="the compiler that ran the release scripts; default: the roc-stable tag in Blueprint.roc",
+        help="the compiler that ran the release scripts; default: the roc-stable tag in Kaifile.roc",
     )
     notes.set_defaults(func=cmd_make_release_notes)
 
@@ -226,7 +226,7 @@ def cmd_make_release_notes(args: argparse.Namespace) -> int:
 
 
 ROC_VERSION_PREFIX = "Roc compiler version "
-STABLE_TAG_RE = re.compile(r'Fetch\(\s*"roc-stable"\s*,\s*Recipes\.roc_nightly\(\s*"([^"]+)"\s*\)')
+STABLE_TAG_RE = re.compile(r'FetchLocked\(\s*"roc-stable"\s*,\s*roc_nightly\(\s*"([^"]+)"\s*\)')
 
 
 def tested_compiler(provided: str, roc: str = "roc") -> str:
@@ -248,13 +248,13 @@ def tested_compiler(provided: str, roc: str = "roc") -> str:
 
 
 def stable_compiler(provided: str, root: Path | None = None) -> str:
-    """The `roc-stable` tag that Blueprint.roc fetches for the scripts."""
+    """The `roc-stable` tag that Kaifile.roc fetches for the scripts."""
     if provided.strip():
         return provided.strip()
-    blueprint = (root or repo_root()) / "Blueprint.roc"
-    match = STABLE_TAG_RE.search(blueprint.read_text(encoding="utf-8"))
+    kaifile = (root or repo_root()) / "Kaifile.roc"
+    match = STABLE_TAG_RE.search(kaifile.read_text(encoding="utf-8"))
     if match is None:
-        raise RuntimeError(f"{blueprint} does not fetch roc-stable with Recipes.roc_nightly(\"<tag>\")")
+        raise RuntimeError(f"{kaifile} does not fetch roc-stable with FetchLocked(\"roc-stable\", roc_nightly(\"<tag>\"))")
     return match.group(1)
 
 
