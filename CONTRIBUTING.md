@@ -21,7 +21,7 @@ Open an issue before a broad API change or a substantial new subsystem so its
 shape can be discussed first. Before opening a pull request, run:
 
 ```bash
-blueprint run check
+kai run check
 zig build test
 ```
 

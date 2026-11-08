@@ -3,13 +3,13 @@
 ##
 ## The platform, its examples and its tests name no compiler; they are checked
 ## with the latest nightly. Only the scripts under `scripts/` are written for
-## one compiler, `roc-stable`, the nightly `Blueprint.roc` fetches.
+## one compiler, `roc-stable`, the nightly `Kaifile.roc` fetches.
 Pins := [].{
 
-	## The nightly tag that the text of `Blueprint.roc` fetches as `roc-stable`.
+	## The nightly tag that the text of `Kaifile.roc` fetches as `roc-stable`.
 	stable_tag : Str -> Try(Str, [NoStableCompiler])
-	stable_tag = |blueprint|
-		match quoted_after(blueprint, "Fetch(\"roc-stable\", Recipes.roc_nightly(\"") {
+	stable_tag = |kaifile|
+		match quoted_after(kaifile, "FetchLocked(\"roc-stable\", roc_nightly(\"") {
 			Ok(tag) => Ok(tag)
 			Err(Missing) => Err(NoStableCompiler)
 		}
@@ -142,9 +142,9 @@ example = "app [Model, program] { rr: platform \"../../platform/main.roc\" }\n\n
 platform_header : Str
 platform_header = "## The platform.\n## app [Model, program] { roc: \"nightly-2026-01-01-0000000\" }\nplatform \"\"\n\trequires {\n\t\t[Model : model] for program : App.Program(model)\n\t}\n\texposes [App]\n\tpackages {\n\t\thttp: \"https://example.com/http.tar.zst\",\n\t\troc: \"nightly-2026-10-23-18478ff\",\n\t}\n\tprovides { init!: \"init\" }\n"
 
-expect Pins.stable_tag("\t\tPrograms([Fetch(\"roc-stable\", Recipes.roc_nightly(\"nightly-2026-10-23-18478ff\"))]),\n") == Ok("nightly-2026-10-23-18478ff")
+expect Pins.stable_tag("\tFetchLocked(\"roc-stable\", roc_nightly(\"nightly-2026-10-23-18478ff\")),\n") == Ok("nightly-2026-10-23-18478ff")
 expect Pins.stable_tag("# `roc-stable` is fetched below\n") == Err(NoStableCompiler)
-expect Pins.stable_tag("Fetch(\"roc-stable\", Recipes.roc_nightly(\"\"))") == Err(NoStableCompiler)
+expect Pins.stable_tag("FetchLocked(\"roc-stable\", roc_nightly(\"\"))") == Err(NoStableCompiler)
 expect Pins.roc_pin(script) == Ok("nightly-2026-10-23-18478ff")
 expect Pins.roc_pin(example) == Err(NoPin)
 expect Pins.roc_pin("app [Model, program] { roc: \"nightly-1\", rr: platform \"../../platform/main.roc\" }\n") == Ok("nightly-1")

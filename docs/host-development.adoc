@@ -135,17 +135,17 @@ After changing hosted functions in `platform/main.roc`, regenerate them:
 
 [source,bash]
 ----
-blueprint run glue-update
+kai run glue-update
 ----
 
-`blueprint run glue` changes nothing and fails when the checked-in
+`kai run glue` changes nothing and fails when the checked-in
 file differs from what the compiler generates. CI runs it that way on every
 pull request, so a compiler that changes the generated ABI is noticed even when
 no hosted function changed. Review such a difference before regenerating: it
 changes what the released host libraries must agree with.
 
 Both tasks run `scripts/check_glue.roc`, a Roc program run by `roc-stable`, the
-compiler `Blueprint.roc` names for the repository's tooling; Blueprint provides
+compiler `Kaifile.roc` names for the repository's tooling; Kai provides
 it and `zig`, and the script also needs `gh` and `sha256sum`. It regenerates
 with the compiler under test, the latest nightly installed as `roc`, and takes
 that compiler's glue specification from the source archive its nightly release

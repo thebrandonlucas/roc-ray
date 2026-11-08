@@ -1,0 +1,16 @@
+name: Set up Kai
+description: Install the Kai release Kaifile.roc names, optionally with Nix, and restore Kai's download cache.
+
+inputs:
+  nix:
+    description: Install Nix, for the dev environment, whose tools come from nixpkgs
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - uses: thebrandonlucas/kai/.github/actions/setup-kai@fd316fbad644f2e52c620ad83385fcc4b9c31372 # v0.0.12
+      with:
+        version: 0.0.12
+        nix: ${{ inputs.nix }}
+        cache: "true"
